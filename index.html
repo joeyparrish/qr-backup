@@ -74,11 +74,15 @@
     <div id="statusMessage" class="center-contents margin-below">Loading...</div>
 
     <div class="stage stage-scan no-print">
-      <div class="center-contents">
-        <label for="camList">Preferred camera:</label>
-      </div>
-      <div class="center-contents margin-below">
-        <select id="camList"></select>
+      <div id="camListGroup" class="center-contents">
+        <div>
+          <label for="camList">Preferred camera:</label>
+        </div>
+        <div>
+          <select id="camList">
+            <option selected disabled>Select a camera</option>
+          </select>
+        </div>
       </div>
 
       <div class="center-contents margin-below">
@@ -139,7 +143,7 @@
 
       camList.addEventListener('change', async (event) => {
         await scanner.setCamera(event.target.value);
-        await updateFlashAvailability();
+        await updateFlashOptions();
       });
 
       const backupSize = Math.min(window.innerWidth, window.innerHeight);
@@ -187,11 +191,15 @@
         setStatus('Camera found!');
 
         const cameras = await QrScanner.listCameras(true);
-        for (const camera of cameras) {
-          const option = document.createElement('option');
-          option.value = camera.id;
-          option.text = camera.label;
-          camList.add(option);
+        if (cameras.length == 1) {
+          camListGroup.style.display = 'none';
+        } else {
+          for (const camera of cameras) {
+            const option = document.createElement('option');
+            option.value = camera.id;
+            option.text = camera.label;
+            camList.add(option);
+          }
         }
 
         scanner = window.scanner = new QrScanner(video,
