@@ -2,30 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <title>QR Backup Printer</title>
     <style>
-      /* TODO: Try this on a laptop, find a way to remove this restriction */
-      @media screen and (orientation: landscape) {
-        body * {
-          display: none;
-        }
-        body::after {
-          content: "Please put your device in portrait mode to continue.";
-        }
-      }
-
       body {
-        font-size: 125%;
+        font-size: 4vh;
       }
 
       button, select {
-        font-size: 80%;
+        font-size: 4vh;
       }
 
       #statusMessage {
         font-weight: bold;
-        font-size: 150%;
+        font-size: 5vh;
       }
 
       .stage {
@@ -39,8 +29,13 @@
       }
 
       #video {
-        width: 80%;
+        height: 40vh;
         margin: auto;
+      }
+      @media (orientation: landscape) {
+        #video {
+          height: 25vh;
+        }
       }
 
       #backupButton {
@@ -51,27 +46,32 @@
         overflow: hidden;
       }
 
-      #qrBackup canvas {
+      #qrBackup canvas,
+      #qrBackup img {
         width: 100%;
+        max-height: 60vh;
+        max-width: 60vh;
+        margin: auto;
       }
 
       .margin-below {
-        margin-bottom: 1em;
+        margin-bottom: 4vh;
       }
 
       .center-contents {
         width: 100%;
         text-align: center;
       }
-    </style>
-    <style type="text/css" media="print">
-      .no-print {
-        display: none;
+
+      @media print {
+        .no-print {
+          display: none;
+        }
       }
     </style>
   </head>
   <body>
-    <div id="statusMessage" class="margin-below">Loading...</div>
+    <div id="statusMessage" class="center-contents margin-below">Loading...</div>
 
     <div class="stage stage-scan no-print">
       <div class="center-contents">
@@ -164,7 +164,7 @@
 
       function readyToScan() {
         setStage('scan');
-        setStatus('Point your camera at the QR you want to back up');
+        setStatus('Scan QR');
       }
 
       printButton.addEventListener('click', () => {
