@@ -36,6 +36,9 @@
         #video {
           height: 25vh;
         }
+        #video.no-camera-list {
+          height: 50vh;
+        }
       }
 
       #backupButton {
@@ -193,6 +196,7 @@
         const cameras = await QrScanner.listCameras(true);
         if (cameras.length == 1) {
           camListGroup.style.display = 'none';
+          video.classList.add('no-camera-list');
         } else {
           for (const camera of cameras) {
             const option = document.createElement('option');
