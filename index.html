@@ -159,13 +159,16 @@
         correctLevel : QRCode.CorrectLevel.H,
       });
 
-      backupButton.addEventListener('click', () => {
+      backupButton.addEventListener('click', async () => {
         scanner.stop();
 
         backup.makeCode(qrText.textContent);
         setStatus('Scan this to restore your backup');
+
+        await delay(0.25);  // Extra time for the QR output to update
         setStage('backup');
 
+        await delay(0.1);  // Extra time for the UI to settle before printing
         window.print();
       });
 
