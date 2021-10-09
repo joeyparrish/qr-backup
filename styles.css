@@ -42,12 +42,10 @@ body[stage="backup"] .stage-backup {
   overflow: hidden;
 }
 
-#qrBackup canvas,
-#qrBackup img {
+#qrBackup {
   width: 100%;
   max-height: 60vh;
   max-width: 60vh;
-  margin: auto;
 }
 
 .margin-below {

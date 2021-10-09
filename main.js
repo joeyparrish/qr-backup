@@ -36,20 +36,42 @@ camList.addEventListener('change', async (event) => {
   await updateFlashOptions();
 });
 
-const backupSize = Math.min(window.innerWidth, window.innerHeight);
-const backup = new QRCode(qrBackup, {
-  text: '',
-  width: backupSize,
-  height: backupSize,
-  colorDark : '#000000',
-  colorLight : '#ffffff',
-  correctLevel : QRCode.CorrectLevel.H,
-});
+function qrSvg(text, svgElement) {
+  while (svgElement.children.length) {
+    svgElement.children[0].remove();
+  }
+
+  const backup = qrcode(text, {
+    errorCorrectLevel: qrcode.ErrorCorrectLevel.H,
+  });
+  const modules = backup.modules;
+  const height = modules.length;
+  const width = modules[0].length;
+  svgElement.setAttributeNS(null, 'viewBox', `0 0 ${width} ${height}`);
+
+  const svgNs = 'http://www.w3.org/2000/svg';
+  for (let y = 0; y < height; ++y) {
+    const row = modules[y];
+    for (let x = 0; x < row.length; ++x) {
+      const cell = row[x];
+      const color = cell ? 'black' : 'white';
+      const rect = document.createElementNS(svgNs, 'rect');
+      rect.setAttributeNS(null, 'x', x.toString());
+      rect.setAttributeNS(null, 'y', y.toString());
+      rect.setAttributeNS(null, 'width', '1');
+      rect.setAttributeNS(null, 'height', '1');
+      rect.setAttributeNS(null, 'fill', color);
+      rect.setAttributeNS(null, 'stroke', 'none');
+      svgElement.appendChild(rect);
+    }
+  }
+}
 
 backupButton.addEventListener('click', async () => {
   scanner.stop();
 
-  backup.makeCode(qrText.textContent);
+  qrSvg(qrText.textContent, qrBackup);
+
   setStatus('Scan this to restore your backup');
 
   await delay(0.25);  // Extra time for the QR output to update

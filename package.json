@@ -1,6 +1,12 @@
 {
+  "scripts": {
+    "build": "mkdir -p dist; browserify -s qrcode node_modules/qr.js/index.js > dist/qr.js"
+  },
   "dependencies": {
     "qr-scanner": "^1.3.0",
-    "qrcodejs": "^1.0.0"
+    "qr.js": "0.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0"
   }
 }
