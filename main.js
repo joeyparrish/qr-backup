@@ -83,7 +83,7 @@ backupButton.addEventListener('click', async () => {
 
 function readyToScan() {
   setStage('scan');
-  setStatus('Scan QR');
+  setStatus('Open Google Authenticator, "Transfer accounts", "Export accounts", "Next", Scan QR');
 }
 
 printButton.addEventListener('click', () => {
