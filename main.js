@@ -1,3 +1,9 @@
+/**
+ * QR Backup
+ * Copyright (C) 2021, Joey Parrish
+ * GPLv3 license, see LICENSE.md
+ */
+
 import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
 QrScanner.WORKER_PATH = './node_modules/qr-scanner/qr-scanner-worker.min.js';
 
