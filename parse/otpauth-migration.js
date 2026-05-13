@@ -108,13 +108,15 @@ function encodeLabelPath(label) {
 
 function otpToUrl(otp) {
   const type = OTP_TYPE[otp.type || 0];
-  // Build params in alphabetical order to match Go's url.Values.Encode() output.
+  // Build params in strict alphabetical key order to match Go's url.Values.Encode()
+  // output. URLSearchParams preserves insertion order, so insertion order must equal
+  // alphabetical order: algorithm, counter, digits, issuer, period, secret.
   const params = new URLSearchParams();
-  if (otp.issuer) params.set('issuer', otp.issuer);
   if (otp.algorithm) params.set('algorithm', ALGORITHM[otp.algorithm]);
-  if (otp.digits) params.set('digits', DIGITS[otp.digits]);
   if (type === 'hotp') params.set('counter', otp.counter || 0);
-  else params.set('period', '30');
+  if (otp.digits) params.set('digits', DIGITS[otp.digits]);
+  if (otp.issuer) params.set('issuer', otp.issuer);
+  if (type === 'totp') params.set('period', '30');
   params.set('secret', base32Encode(otp.secret));
   return `otpauth://${type}/${encodeLabelPath(otp.name || '')}?${params}`;
 }
