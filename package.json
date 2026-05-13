@@ -1,4 +1,7 @@
 {
+  "name": "qr-backup",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "build": "esbuild --bundle --global-name=qrcode --outfile=dist/qr.js node_modules/qr.js/index.js"
   },
