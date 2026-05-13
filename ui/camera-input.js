@@ -87,7 +87,13 @@ export class CameraInput {
 
       this.scanner = new QrScanner(
         this.video,
-        (scan) => this.onResult(scan.data),
+        (scan) => {
+          // QrScanner sometimes emits blank scan data.  Don't fire the
+          // callback in that case.
+          if (scan?.data) {
+            this.onResult(scan.data);
+          }
+        },
         {
           returnDetailedScanResult: true,
           highlightScanRegion: true,
