@@ -6,14 +6,6 @@
 
 import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
 
-// The installed qr-scanner version does not accept workerPath as a constructor
-// option; the options-object constructor only supports returnDetailedScanResult,
-// onDecodeError, preferredCamera, maxScansPerSecond, highlightScanRegion,
-// highlightCodeOutline, and overlay.  The WORKER_PATH static setter is marked
-// @deprecated in the type definitions but is the only supported way to supply a
-// custom worker path in this version.
-QrScanner.WORKER_PATH = './node_modules/qr-scanner/qr-scanner-worker.min.js';
-
 export class CameraInput {
   constructor(container, { onResult } = {}) {
     this.container = container;
