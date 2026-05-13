@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --global-name=qrcode --outfile=dist/qr.js node_modules/qr.js/index.js",
+    "build": "esbuild --bundle --format=esm --outfile=dist/qr.js node_modules/qr.js/index.js",
     "test": "node --test test/*.js"
   },
   "dependencies": {

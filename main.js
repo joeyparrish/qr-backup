@@ -6,6 +6,7 @@
 
 import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
 QrScanner.WORKER_PATH = './node_modules/qr-scanner/qr-scanner-worker.min.js';
+import qrcode from './dist/qr.js';
 
 let scanner = null;
 window.QrScanner = QrScanner;
