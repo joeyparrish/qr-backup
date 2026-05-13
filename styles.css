@@ -54,6 +54,12 @@ body[stage="backup"] .stage-backup {
   max-width: 60vh;
 }
 
+#qrBackup > svg {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+}
+
 .margin-below {
   margin-bottom: 4vh;
 }

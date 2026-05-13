@@ -6,7 +6,7 @@
 
 import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
 QrScanner.WORKER_PATH = './node_modules/qr-scanner/qr-scanner-worker.min.js';
-import qrcode from './dist/qr.js';
+import { renderQrSvg } from './qr-render.js';
 
 let scanner = null;
 window.QrScanner = QrScanner;
@@ -43,41 +43,10 @@ camList.addEventListener('change', async (event) => {
   await updateFlashOptions();
 });
 
-function qrSvg(text, svgElement) {
-  while (svgElement.children.length) {
-    svgElement.children[0].remove();
-  }
-
-  const backup = qrcode(text, {
-    errorCorrectLevel: qrcode.ErrorCorrectLevel.H,
-  });
-  const modules = backup.modules;
-  const height = modules.length;
-  const width = modules[0].length;
-  svgElement.setAttributeNS(null, 'viewBox', `0 0 ${width} ${height}`);
-
-  const svgNs = 'http://www.w3.org/2000/svg';
-  for (let y = 0; y < height; ++y) {
-    const row = modules[y];
-    for (let x = 0; x < row.length; ++x) {
-      const cell = row[x];
-      const color = cell ? 'black' : 'white';
-      const rect = document.createElementNS(svgNs, 'rect');
-      rect.setAttributeNS(null, 'x', x.toString());
-      rect.setAttributeNS(null, 'y', y.toString());
-      rect.setAttributeNS(null, 'width', '1');
-      rect.setAttributeNS(null, 'height', '1');
-      rect.setAttributeNS(null, 'fill', color);
-      rect.setAttributeNS(null, 'stroke', 'none');
-      svgElement.appendChild(rect);
-    }
-  }
-}
-
 backupButton.addEventListener('click', async () => {
   scanner.stop();
 
-  qrSvg(qrText.textContent, qrBackup);
+  qrBackup.replaceChildren(renderQrSvg(qrText.textContent));
 
   setStatus('Scan this to restore your backup');
 
