@@ -10,31 +10,18 @@
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self'; connect-src 'none'; img-src 'self' data: blob:; media-src 'self' blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-    <title>QR Backup Printer</title>
+    <title>QR Backup</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link href="styles.css" rel="stylesheet">
   </head>
   <body>
-    <div id="statusMessage" class="center-contents margin-below">Loading...</div>
-
-    <div class="stage stage-scan no-print">
-      <div id="cameraRoot"></div>
-
-      <div class="center-contents margin-below">
-        <button id="backupButton">Print backup</button>
-        <div id="qrText"></div>
-      </div>
-    </div>
-
-    <div class="stage stage-backup">
-      <div class="center-contents margin-below no-print">
-        <button id="printButton">Print</button>
-        <button id="goBackButton">Go back</button>
-      </div>
-
-      <div class="center-contents"><div id="qrBackup"></div></div>
-    </div>
-
+    <header>QR Backup</header>
+    <main>
+      <section id="cameraRoot" class="section section--camera"></section>
+      <section id="pasteRoot" class="section section--paste"></section>
+      <section id="resultRoot" class="section section--result"></section>
+    </main>
+    <div id="printSlot" aria-hidden="true"></div>
     <script type="module" src="main.js"></script>
   </body>
 </html>

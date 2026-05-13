@@ -4,72 +4,31 @@
  * GPLv3 license, see LICENSE.md
  */
 
-import { renderQrSvg } from './ui/qr-render.js';
+import { identify } from './parse/identify.js';
 import { CameraInput } from './ui/camera-input.js';
+import { PasteInput } from './ui/paste-input.js';
+import { ResultView } from './ui/result-view.js';
+import { createPrinter } from './ui/print-qr.js';
 
 const cameraRoot = document.getElementById('cameraRoot');
-const qrText = document.getElementById('qrText');
-const backupButton = document.getElementById('backupButton');
-const statusMessage = document.getElementById('statusMessage');
-const qrBackup = document.getElementById('qrBackup');
-const printButton = document.getElementById('printButton');
-const goBackButton = document.getElementById('goBackButton');
+const pasteRoot = document.getElementById('pasteRoot');
+const resultRoot = document.getElementById('resultRoot');
+const printSlot = document.getElementById('printSlot');
 
-let cameraInput = null;
+const printer = createPrinter(printSlot);
+const resultView = new ResultView(resultRoot, { printer });
 
-function setStage(name) {
-  document.body.setAttribute('stage', name);
+function handleInput(text) {
+  resultView.show(identify(text));
 }
 
-function setStatus(content) {
-  statusMessage.textContent = content;
-}
+new PasteInput(pasteRoot, { onResult: handleInput });
 
-function delay(seconds) {
-  return new Promise(resolve => setTimeout(resolve, seconds * 1000));
-}
-
-function readyToScan() {
-  setStage('scan');
-  setStatus('Open Google Authenticator, "Transfer accounts", "Export accounts", "Next", Scan QR');
-}
-
-function handleScanResult(text) {
-  backupButton.style.display = 'inline-block';
-  qrText.textContent = text;
-}
-
-backupButton.addEventListener('click', async () => {
-  await cameraInput.stop();
-  qrBackup.replaceChildren(renderQrSvg(qrText.textContent));
-  setStatus('Scan this to restore your backup');
-  await delay(0.25);
-  setStage('backup');
-  await delay(0.1);
-  window.print();
+const cameraInput = new CameraInput(cameraRoot, { onResult: handleInput });
+cameraInput.start().catch(() => {
+  cameraRoot.replaceChildren();
+  const msg = document.createElement('p');
+  msg.className = 'result-hint';
+  msg.textContent = 'No camera available. Paste a URL above instead.';
+  cameraRoot.appendChild(msg);
 });
-
-printButton.addEventListener('click', () => {
-  window.print();
-});
-
-goBackButton.addEventListener('click', async () => {
-  await cameraInput.start();
-  readyToScan();
-});
-
-async function main() {
-  setStatus('Detecting cameras...');
-  cameraInput = new CameraInput(cameraRoot, { onResult: handleScanResult });
-  try {
-    await cameraInput.start();
-  } catch (e) {
-    setStatus('No camera found!');
-    return;
-  }
-  setStatus('Camera found!');
-  await delay(1);
-  readyToScan();
-}
-
-main();
