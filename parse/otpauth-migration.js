@@ -97,16 +97,26 @@ const ALGORITHM = ['SHA1', 'SHA1', 'SHA256', 'SHA512', 'MD5'];
 // unspecified=0 (defaults to 6), six=1, eight=2
 const DIGITS = [6, 6, 8];
 
+// Encode a label for the otpauth:// path segment.
+// The Go url package encodes the path segment with PathEscape, which encodes
+// spaces as %20 but leaves : and @ unencoded (they are valid in path segments).
+function encodeLabelPath(label) {
+  // encodeURIComponent encodes everything except: A-Z a-z 0-9 - _ . ! ~ * ' ( )
+  // We additionally want to leave : and @ unencoded, matching Go's url.PathEscape.
+  return encodeURIComponent(label).replaceAll('%3A', ':').replaceAll('%40', '@');
+}
+
 function otpToUrl(otp) {
   const type = OTP_TYPE[otp.type || 0];
+  // Build params in alphabetical order to match Go's url.Values.Encode() output.
   const params = new URLSearchParams();
-  params.set('secret', base32Encode(otp.secret));
   if (otp.issuer) params.set('issuer', otp.issuer);
   if (otp.algorithm) params.set('algorithm', ALGORITHM[otp.algorithm]);
   if (otp.digits) params.set('digits', DIGITS[otp.digits]);
   if (type === 'hotp') params.set('counter', otp.counter || 0);
   else params.set('period', '30');
-  return `otpauth://${type}/${encodeURIComponent(otp.name || '')}?${params}`;
+  params.set('secret', base32Encode(otp.secret));
+  return `otpauth://${type}/${encodeLabelPath(otp.name || '')}?${params}`;
 }
 
 export function isMigrationUrl(url) {
