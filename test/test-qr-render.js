@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { qrMatrix } from '../qr-render.js';
+import { qrMatrix } from '../ui/qr-render.js';
 
 test('qrMatrix returns a square grid of booleans', () => {
   const result = qrMatrix('hello');

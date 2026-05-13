@@ -4,7 +4,7 @@
  * GPLv3 license, see LICENSE.md
  */
 
-import { renderQrSvg } from './qr-render.js';
+import { renderQrSvg } from './ui/qr-render.js';
 import { CameraInput } from './camera-input.js';
 
 const cameraRoot = document.getElementById('cameraRoot');
