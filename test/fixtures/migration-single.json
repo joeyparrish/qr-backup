@@ -1,0 +1,7 @@
+{
+  "description": "Single synthetic TOTP account with issuer.",
+  "input": "otpauth-migration://offline?data=CiUKCkhlbGxvV29ybGQSD1Rlc3Q6dXNlcjFAdGVzdBoEVGVzdDACEAEYAQ%3D%3D",
+  "expected": [
+    "otpauth://totp/Test:user1@test?issuer=Test\u0026period=30\u0026secret=JBSWY3DPK5XXE3DE"
+  ]
+}

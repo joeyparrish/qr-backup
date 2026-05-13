@@ -1,0 +1,7 @@
+{
+  "description": "Synthetic account whose label and issuer contain characters that must be URL-encoded.",
+  "input": "otpauth-migration://offline?data=CjYKCkhlbGxvV29ybGQSG0FjbWUgQ29ycDp1c2VyQGFjbWUuZXhhbXBsZRoJQWNtZSBDb3JwMAIQARgB",
+  "expected": [
+    "otpauth://totp/Acme%20Corp:user@acme.example?issuer=Acme+Corp\u0026period=30\u0026secret=JBSWY3DPK5XXE3DE"
+  ]
+}

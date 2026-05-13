@@ -1,0 +1,9 @@
+{
+  "description": "Three synthetic TOTP accounts with mixed issuers.",
+  "input": "otpauth-migration://offline?data=CiUKCkhlbGxvV29ybGQSD1Rlc3Q6dXNlcjFAdGVzdBoEVGVzdDACCiUKCjAxMjM0NTY3ODkSD1Rlc3Q6dXNlcjJAdGVzdBoEVGVzdDACCiIKBUhlbGxvEhBPdGhlcjp1c2VyM0B0ZXN0GgVPdGhlcjACEAEYAQ%3D%3D",
+  "expected": [
+    "otpauth://totp/Test:user1@test?issuer=Test\u0026period=30\u0026secret=JBSWY3DPK5XXE3DE",
+    "otpauth://totp/Test:user2@test?issuer=Test\u0026period=30\u0026secret=GAYTEMZUGU3DOOBZ",
+    "otpauth://totp/Other:user3@test?issuer=Other\u0026period=30\u0026secret=JBSWY3DP"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Synthetic account with no issuer field.",
+  "input": "otpauth-migration://offline?data=CiMKCkhlbGxvV29ybGQSE3VzZXItd2l0aG91dC1pc3N1ZXIwAhABGAE%3D",
+  "expected": [
+    "otpauth://totp/user-without-issuer?period=30\u0026secret=JBSWY3DPK5XXE3DE"
+  ]
+}
