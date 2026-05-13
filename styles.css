@@ -102,6 +102,10 @@ main {
   border-top: 1px solid var(--border-color);
 }
 
+.result-card__editable {
+  width: 100%;
+}
+
 .result-card__title {
   font-size: 1rem;
   font-weight: 600;
@@ -119,13 +123,24 @@ main {
   margin: 0 0 var(--space-1) 0;
 }
 
+.result-row__label {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.result-row__url {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: var(--space-1);
+}
+
 .result-row__title {
   font-weight: 600;
+  margin-bottom: var(--space-1);
 }
 
 .result-row__sub {
   font-size: 0.875rem;
-  color: var(--muted);
   margin-bottom: var(--space-1);
 }
 

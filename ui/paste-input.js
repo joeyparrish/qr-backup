@@ -35,6 +35,10 @@ export class PasteInput {
     });
   }
 
+  set(text) {
+    this.textarea.value = text;
+  }
+
   _fire() {
     const text = this.textarea.value.trim();
     if (text) {

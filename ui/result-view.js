@@ -4,7 +4,7 @@
  * GPLv3 license, see LICENSE.md
  */
 
-import { parseOtpauthUrl } from '../parse/otpauth.js';
+import { parseOtpauthUrl, assembleOtpauthUrl } from '../parse/otpauth.js';
 import { copyToClipboard } from './clipboard.js';
 
 export class ResultView {
@@ -40,13 +40,26 @@ export class ResultView {
 
     const header = document.createElement('div');
     header.className = 'result-card__header';
-    const title = document.createElement('h2');
-    title.className = 'result-card__title';
-    title.textContent = `Migration backup (${result.accounts.length} accounts)`;
+
+    const title = this._editableField(
+        'result-card__title',
+        `Full backup - ${(new Date()).toDateString()} - ${result.accounts.length} accounts`,
+        // Nothing to update here, but provide a dummy callback for editability.
+        (value) => {});
     header.appendChild(title);
+
+    const urlLabel = this._label('URL');
+    header.appendChild(urlLabel);
+
+    const url = this._editableField(
+        'result-row__url', result.input);
+    header.appendChild(url);
+
     header.appendChild(this._makeActions([
-      this._copyButton('Copy URL', result.input),
-      this._printButton(result.input),
+      this._copyButton('Copy URL', () => result.input),
+      this._printButton(
+          () => title.value,
+          () => result.input),
     ]));
     card.appendChild(header);
 
@@ -82,12 +95,36 @@ export class ResultView {
     text.textContent = result.input;
     body.appendChild(text);
     body.appendChild(this._makeActions([
-      this._copyButton('Copy text', result.input),
-      this._printButton(result.input),
+      this._copyButton('Copy text', () => result.input),
+      this._printButton(
+          () => '',
+          () => result.input),
     ]));
     card.appendChild(body);
 
     this.container.replaceChildren(card);
+  }
+
+  _editableField(className, initialValue, writeChanges) {
+    const input = document.createElement('input');
+    input.classList.add('result-card__editable');
+    input.classList.add(className);
+
+    input.value = initialValue;
+
+    if (writeChanges) {
+      input.oninput = () => writeChanges(input.value);
+    } else {
+      input.disabled = true;
+    }
+    return input;
+  }
+
+  _label(text) {
+    const label = document.createElement('label');
+    label.className = 'result-row__label';
+    label.textContent = text;
+    return label;
   }
 
   _renderAccountRow(otpauthUrl) {
@@ -95,20 +132,43 @@ export class ResultView {
     const row = document.createElement('div');
     row.className = 'result-card__row';
 
-    const title = document.createElement('div');
-    title.className = 'result-row__title';
-    title.textContent = parsed.issuer || '(no issuer)';
+    const urlLabel = this._label('URL');
+    row.appendChild(urlLabel);
+
+    const url = this._editableField(
+        'result-row__url', otpauthUrl);
+    row.appendChild(url);
+
+    const titleLabel = this._label('issuer');
+    row.appendChild(titleLabel);
+
+    const title = this._editableField(
+        'result-row__title',
+        parsed.params.get('issuer') || '(no issuer)',
+        (value) => {
+          parsed.params.set('issuer', value);
+          url.value = assembleOtpauthUrl(parsed);
+        });
     row.appendChild(title);
 
-    const sub = document.createElement('div');
-    sub.className = 'result-row__sub';
-    sub.textContent = parsed.label;
+    const subLabel = this._label('subject');
+    row.appendChild(subLabel);
+
+    const sub = this._editableField(
+        'result-row__sub',
+        parsed.label,
+        (value) => {
+          parsed.label = value;
+          url.value = assembleOtpauthUrl(parsed);
+        });
     row.appendChild(sub);
 
     row.appendChild(this._makeActions([
-      this._copyButton('Copy URL', otpauthUrl),
-      this._copyButton('Copy key', parsed.secret),
-      this._printButton(otpauthUrl),
+      this._copyButton('Copy URL', () => assembleOtpauthUrl(parsed)),
+      this._copyButton('Copy key', () => parsed.params.get('secret')),
+      this._printButton(
+          () => `${parsed.label} @ ${parsed.params.get('issuer')}`,
+          () => assembleOtpauthUrl(parsed)),
     ]));
 
     return row;
@@ -121,19 +181,21 @@ export class ResultView {
     return div;
   }
 
-  _copyButton(label, text) {
+  _copyButton(label, textCallback) {
     const btn = document.createElement('button');
     btn.className = 'button button--copy';
     btn.textContent = label;
-    btn.addEventListener('click', () => copyToClipboard(text, btn));
+    btn.addEventListener('click', () => copyToClipboard(textCallback(), btn));
     return btn;
   }
 
-  _printButton(text) {
+  _printButton(titleCallback, textCallback) {
     const btn = document.createElement('button');
     btn.className = 'button button--print';
     btn.textContent = 'Print QR';
-    btn.addEventListener('click', () => this.printer.print(text));
+    btn.addEventListener('click', () => {
+      this.printer.print(titleCallback(), textCallback());
+    });
     return btn;
   }
 }

@@ -8,8 +8,8 @@ test('parseOtpauthUrl: TOTP with issuer query param and prefixed label', () => {
   );
   assert.equal(result.type, 'totp');
   assert.equal(result.label, 'Example:alice@google.com');
-  assert.equal(result.issuer, 'Example');
-  assert.equal(result.secret, 'JBSWY3DPEHPK3PXP');
+  assert.equal(result.params.get('issuer'), 'Example');
+  assert.equal(result.params.get('secret'), 'JBSWY3DPEHPK3PXP');
 });
 
 test('parseOtpauthUrl: TOTP with no issuer', () => {
@@ -18,8 +18,8 @@ test('parseOtpauthUrl: TOTP with no issuer', () => {
   );
   assert.equal(result.type, 'totp');
   assert.equal(result.label, 'user-without-issuer');
-  assert.equal(result.issuer, '');
-  assert.equal(result.secret, 'JBSWY3DPEHPK3PXP');
+  assert.equal(result.params.get('issuer'), undefined);
+  assert.equal(result.params.get('secret'), 'JBSWY3DPEHPK3PXP');
 });
 
 test('parseOtpauthUrl: URL-encoded label and issuer', () => {
@@ -27,8 +27,8 @@ test('parseOtpauthUrl: URL-encoded label and issuer', () => {
     'otpauth://totp/Acme%20Corp%3Auser%40acme.example?issuer=Acme%20Corp&secret=JBSWY3DPEHPK3PXP'
   );
   assert.equal(result.label, 'Acme Corp:user@acme.example');
-  assert.equal(result.issuer, 'Acme Corp');
-  assert.equal(result.secret, 'JBSWY3DPEHPK3PXP');
+  assert.equal(result.params.get('issuer'), 'Acme Corp');
+  assert.equal(result.params.get('secret'), 'JBSWY3DPEHPK3PXP');
 });
 
 test('parseOtpauthUrl: HOTP type recognised', () => {
@@ -40,7 +40,7 @@ test('parseOtpauthUrl: HOTP type recognised', () => {
 
 test('parseOtpauthUrl: missing secret returns empty string for secret', () => {
   const result = parseOtpauthUrl('otpauth://totp/foo?issuer=Bar');
-  assert.equal(result.secret, '');
+  assert.equal(result.params.get('secret'), undefined);
 });
 
 test('parseOtpauthUrl: non-otpauth URL throws', () => {

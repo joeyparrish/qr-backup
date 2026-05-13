@@ -18,17 +18,23 @@ const printSlot = document.getElementById('printSlot');
 const printer = createPrinter(printSlot);
 const resultView = new ResultView(resultRoot, { printer });
 
-function handleInput(text) {
-  resultView.show(identify(text));
-}
+const pasteInput = new PasteInput(pasteRoot, {
+  onResult: (text) => {
+    resultView.show(identify(text));
+  },
+});
 
-new PasteInput(pasteRoot, { onResult: handleInput });
+const cameraInput = new CameraInput(cameraRoot, {
+  onResult: (text) => {
+    pasteInput.set(text);
+    resultView.show(identify(text));
+  },
+});
 
-const cameraInput = new CameraInput(cameraRoot, { onResult: handleInput });
 cameraInput.start().catch(() => {
   cameraRoot.replaceChildren();
   const msg = document.createElement('p');
   msg.className = 'result-hint';
-  msg.textContent = 'No camera available. Paste a URL above instead.';
+  msg.textContent = 'No camera available. Paste a URL below instead.';
   cameraRoot.appendChild(msg);
 });

@@ -11,8 +11,18 @@ export function createPrinter(slot) {
     slot.replaceChildren();
   });
   return {
-    print(text) {
-      slot.replaceChildren(renderQrSvg(text));
+    print(title, text) {
+      slot.replaceChildren();
+
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+
+      const svg = renderQrSvg(text);
+
+      console.log({slot, h2, svg});
+      slot.appendChild(h2);
+      slot.appendChild(svg);
+
       window.print();
     },
   };
