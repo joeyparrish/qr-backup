@@ -4,12 +4,18 @@
  * GPLv3 license, see LICENSE.md
  */
 
-import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
-QrScanner.WORKER_PATH = './node_modules/qr-scanner/qr-scanner-worker.min.js';
 import { renderQrSvg } from './qr-render.js';
+import { CameraInput } from './camera-input.js';
 
-let scanner = null;
-window.QrScanner = QrScanner;
+const cameraRoot = document.getElementById('cameraRoot');
+const qrText = document.getElementById('qrText');
+const backupButton = document.getElementById('backupButton');
+const statusMessage = document.getElementById('statusMessage');
+const qrBackup = document.getElementById('qrBackup');
+const printButton = document.getElementById('printButton');
+const goBackButton = document.getElementById('goBackButton');
+
+let cameraInput = null;
 
 function setStage(name) {
   document.body.setAttribute('stage', name);
@@ -23,85 +29,45 @@ function delay(seconds) {
   return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
 
-async function updateFlashOptions() {
-  const hasFlash = await scanner.hasFlash();
-  flashToggle.style.display = hasFlash ? '' : 'none';
-}
-
-function onScannerResult(result) {
-  backupButton.style.display = 'inline-block';
-  qrText.textContent = result;
-}
-
-flashToggle.addEventListener('click', async () => {
-  await scanner.toggleFlash();
-  flashState.textContent = scanner.isFlashOn() ? 'on' : 'off';
-});
-
-camList.addEventListener('change', async (event) => {
-  await scanner.setCamera(event.target.value);
-  await updateFlashOptions();
-});
-
-backupButton.addEventListener('click', async () => {
-  scanner.stop();
-
-  qrBackup.replaceChildren(renderQrSvg(qrText.textContent));
-
-  setStatus('Scan this to restore your backup');
-
-  await delay(0.25);  // Extra time for the QR output to update
-  setStage('backup');
-
-  await delay(0.1);  // Extra time for the UI to settle before printing
-  window.print();
-});
-
 function readyToScan() {
   setStage('scan');
   setStatus('Open Google Authenticator, "Transfer accounts", "Export accounts", "Next", Scan QR');
 }
+
+function handleScanResult(text) {
+  backupButton.style.display = 'inline-block';
+  qrText.textContent = text;
+}
+
+backupButton.addEventListener('click', async () => {
+  await cameraInput.stop();
+  qrBackup.replaceChildren(renderQrSvg(qrText.textContent));
+  setStatus('Scan this to restore your backup');
+  await delay(0.25);
+  setStage('backup');
+  await delay(0.1);
+  window.print();
+});
 
 printButton.addEventListener('click', () => {
   window.print();
 });
 
 goBackButton.addEventListener('click', async () => {
-  await scanner.start();
+  await cameraInput.start();
   readyToScan();
 });
 
 async function main() {
   setStatus('Detecting cameras...');
-  const hasCamera = await QrScanner.hasCamera();
-  if (!hasCamera) {
+  cameraInput = new CameraInput(cameraRoot, { onResult: handleScanResult });
+  try {
+    await cameraInput.start();
+  } catch (e) {
     setStatus('No camera found!');
     return;
   }
-
   setStatus('Camera found!');
-
-  const cameras = await QrScanner.listCameras(true);
-  if (cameras.length == 1) {
-    camListGroup.style.display = 'none';
-    video.classList.add('no-camera-list');
-  } else {
-    for (const camera of cameras) {
-      const option = document.createElement('option');
-      option.value = camera.id;
-      option.text = camera.label;
-      camList.add(option);
-    }
-  }
-
-  scanner = window.scanner = new QrScanner(video,
-      onScannerResult,
-      error => {});
-
-  scanner.setInversionMode('both');
-  await scanner.start();
-  await updateFlashOptions();
-
   await delay(1);
   readyToScan();
 }
