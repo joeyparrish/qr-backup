@@ -4,7 +4,7 @@
  * GPLv3 license, see LICENSE.md
  */
 
-import QrScanner from './node_modules/qr-scanner/qr-scanner.min.js';
+import QrScanner from '../node_modules/qr-scanner/qr-scanner.min.js';
 
 export class CameraInput {
   constructor(container, { onResult } = {}) {
