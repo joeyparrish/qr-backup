@@ -43,7 +43,7 @@ export class CameraInput {
     this.flashRow.className = 'center-contents margin-below';
     this.flashToggle = document.createElement('button');
     this.flashToggle.id = 'flashToggle';
-    this.flashToggle.textContent = 'Flash: ';
+    this.flashToggle.textContent = '📸 Flash: ';
     this.flashState = document.createElement('span');
     this.flashState.id = 'flashState';
     this.flashState.textContent = 'off';
@@ -74,34 +74,36 @@ export class CameraInput {
   }
 
   async start() {
-    const hasCamera = await QrScanner.hasCamera();
-    if (!hasCamera) {
-      throw new Error('No camera found');
-    }
-
-    const cameras = await QrScanner.listCameras(true);
-    if (cameras.length === 1) {
-      this.camListGroup.style.display = 'none';
-      this.video.classList.add('no-camera-list');
-    } else {
-      for (const camera of cameras) {
-        const option = document.createElement('option');
-        option.value = camera.id;
-        option.text = camera.label;
-        this.camList.add(option);
+    if (!this.scanner) {
+      const hasCamera = await QrScanner.hasCamera();
+      if (!hasCamera) {
+        throw new Error('No camera found');
       }
-    }
 
-    this.scanner = new QrScanner(
-      this.video,
-      (scan) => this.onResult(scan.data),
-      {
-        returnDetailedScanResult: true,
-        highlightScanRegion: true,
-        highlightCodeOutline: true,
-      },
-    );
-    this.scanner.setInversionMode('both');
+      const cameras = await QrScanner.listCameras(true);
+      if (cameras.length === 1) {
+        this.camListGroup.style.display = 'none';
+        this.video.classList.add('no-camera-list');
+      } else {
+        for (const camera of cameras) {
+          const option = document.createElement('option');
+          option.value = camera.id;
+          option.text = camera.label;
+          this.camList.add(option);
+        }
+      }
+
+      this.scanner = new QrScanner(
+        this.video,
+        (scan) => this.onResult(scan.data),
+        {
+          returnDetailedScanResult: true,
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+        },
+      );
+      this.scanner.setInversionMode('both');
+    }
 
     await this.scanner.start();
     await this._refreshFlash();
