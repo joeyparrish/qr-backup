@@ -2,8 +2,10 @@
   "name": "qr-backup",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --global-name=qrcode --outfile=dist/qr.js node_modules/qr.js/index.js"
+    "build": "esbuild --bundle --global-name=qrcode --outfile=dist/qr.js node_modules/qr.js/index.js",
+    "test": "node --test test/*.js"
   },
   "dependencies": {
     "qr-scanner": "^1.4.2",
