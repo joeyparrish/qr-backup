@@ -41,11 +41,15 @@ export class ResultView {
     const header = document.createElement('div');
     header.className = 'result-card__header';
 
+    // The title is editable but writes back to nothing: the migration URL
+    // has no title field. Its only consumer is the Print QR button below,
+    // which reads `title.value` at click time so the printed paper carries
+    // whatever the user typed. The no-op callback is what keeps the input
+    // enabled (see _editableField).
     const title = this._editableField(
         'result-card__title',
         `Full backup - ${(new Date()).toDateString()} - ${result.accounts.length} accounts`,
-        // Nothing to update here, but provide a dummy callback for editability.
-        (value) => {});
+        () => {});
     header.appendChild(title);
 
     const urlLabel = this._label('URL');
