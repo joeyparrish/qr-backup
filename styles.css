@@ -31,6 +31,12 @@ header {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: var(--space-2);
+  display: flex;
+  justify-content: space-between;
+}
+
+#readme {
+  font-size: 0.7rem;
 }
 
 main {
