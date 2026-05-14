@@ -16,11 +16,9 @@ export function createPrinter(slot) {
 
       const h2 = document.createElement('h2');
       h2.textContent = title;
+      slot.appendChild(h2);
 
       const svg = renderQrSvg(text);
-
-      console.log({slot, h2, svg});
-      slot.appendChild(h2);
       slot.appendChild(svg);
 
       window.print();
