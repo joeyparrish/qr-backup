@@ -14,7 +14,7 @@ to ESM repackage of `qr.js`. Our own JavaScript is plain ES modules and
 ships unbundled for auditability.
 
 ```
-npm install
+npm ci
 npm run build
 ```
 
@@ -26,6 +26,6 @@ Tests use Node's built-in test runner. No additional test dependencies.
 npm test
 ```
 
-Tests cover the pure parsing modules (`parse/`) and the pure surface of
-the QR matrix builder (`qr-render.js`). UI behavior is verified manually
-in a browser.
+Tests cover the pure parsing modules (`parse/`) and the pure surface of the QR
+matrix builder (`ui/qr-render.js`). UI behavior is verified manually in a
+browser.
